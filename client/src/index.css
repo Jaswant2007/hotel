@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-stone-50 text-ink antialiased;
+    font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: 'Baloo 2', 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition
+      focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700 focus:ring-brand-500 shadow-pop;
+  }
+  .btn-dark {
+    @apply btn bg-ink text-white hover:bg-stone-800 focus:ring-stone-600;
+  }
+  .btn-outline {
+    @apply btn border border-stone-300 bg-white text-stone-700 hover:border-brand-400 hover:text-brand-700 focus:ring-brand-300;
+  }
+  .btn-green {
+    @apply btn bg-leaf-600 text-white hover:bg-leaf-700 focus:ring-leaf-500;
+  }
+  .card {
+    @apply rounded-2xl border border-stone-200/80 bg-white shadow-card;
+  }
+  .input {
+    @apply w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm outline-none transition
+      placeholder:text-stone-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-200;
+  }
+  .label {
+    @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-stone-500;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold;
+  }
+}
+
+/* thin scrollbar for tab rows */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -1,0 +1,233 @@
+[
+  {
+    "_id": "seed-chicken-biryani",
+    "name": "Chicken Biryani",
+    "description": "Dum-cooked Chicken biryani with tender pieces, fried onion and raitha.",
+    "price": 150,
+    "category": "afternoon",
+    "isVeg": false,
+    "image": "/images/dishes/chicken-biryani.jpg",
+    "isPopular": true,
+    "available": true
+  },
+  {
+    "_id": "seed-curd-rice",
+    "name": "Curd Rice",
+    "description": "Cooling curd rice with pomegranate, ginger and a tempering of mustard and curry leaves.",
+    "price": 50,
+    "category": "afternoon",
+    "isVeg": true,
+    "image": "/images/dishes/rice.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-full-meals",
+    "name": "Full Meals",
+    "description": "Unlimited rice with sambar, rasam, kootu, poriyal, curd, pickle, appalam and dessert.",
+    "price": 90,
+    "category": "afternoon",
+    "isVeg": true,
+    "image": "/images/dishes/meals.jpg",
+    "isPopular": true,
+    "available": true
+  },
+  {
+    "_id": "seed-lemon-rice",
+    "name": "Lemon Rice",
+    "description": "Tangy lemon rice with peanuts, chana dal and curry leaves.",
+    "price": 50,
+    "category": "afternoon",
+    "isVeg": true,
+    "image": "/images/dishes/rice.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-mini-meals",
+    "name": "Mini Meals",
+    "description": "A lighter portion of the full meals — rice, sambar, one veg, rasam and curd.",
+    "price": 70,
+    "category": "afternoon",
+    "isVeg": true,
+    "image": "/images/dishes/meals.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-rasam-rice",
+    "name": "Rasam Rice",
+    "description": "Steamed rice drowned in hot pepper-tamarind rasam with a spoon of ghee.",
+    "price": 50,
+    "category": "afternoon",
+    "isVeg": true,
+    "image": "/images/dishes/rice.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-veg-biryani",
+    "name": "Veg Biryani",
+    "description": "Seeraga samba rice biryani with seasonal vegetables, raita on the side.",
+    "price": 110,
+    "category": "afternoon",
+    "isVeg": true,
+    "image": "/images/dishes/veg-biryani.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-chapati---kurma",
+    "name": "Chapati + Kurma",
+    "description": "Soft whole-wheat chapatis with coconut kurma.",
+    "price": 60,
+    "category": "dinner",
+    "isVeg": true,
+    "image": "/images/dishes/poori.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-chicken-chettinad",
+    "name": "Chicken Chettinad",
+    "description": "Fiery Chettinad chicken roasted with freshly ground masala — our signature dish.",
+    "price": 180,
+    "category": "dinner",
+    "isVeg": false,
+    "image": "/images/dishes/chettinad-chicken.jpg",
+    "isPopular": true,
+    "available": true
+  },
+  {
+    "_id": "seed-egg-curry",
+    "name": "Egg Curry",
+    "description": "Boiled eggs simmered in a thick onion-tomato gravy.",
+    "price": 70,
+    "category": "dinner",
+    "isVeg": false,
+    "image": "/images/dishes/egg-curry.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-fish-fry",
+    "name": "Fish Fry",
+    "description": "Seer fish slices marinated in chilli and turmeric, shallow fried till crisp.",
+    "price": 150,
+    "category": "dinner",
+    "isVeg": false,
+    "image": "/images/dishes/fish-fry.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-kothu-parotta",
+    "name": "Kothu Parotta",
+    "description": "Parotta minced on the hot tawa with egg, onions and salna — the street-side classic.",
+    "price": 100,
+    "category": "dinner",
+    "isVeg": false,
+    "image": "/images/dishes/kothu.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-parotta---salna--2pcs-",
+    "name": "Parotta + Salna (2pcs)",
+    "description": "Flaky layered parottas with a rich, spicy salna gravy.",
+    "price": 50,
+    "category": "dinner",
+    "isVeg": true,
+    "image": "/images/dishes/parotta.jpg",
+    "isPopular": true,
+    "available": true
+  },
+  {
+    "_id": "seed-filter-coffee",
+    "name": "Filter Coffee",
+    "description": "Strong degree coffee brewed the traditional filter way — 60ml of pure energy.",
+    "price": 20,
+    "category": "morning",
+    "isVeg": true,
+    "image": "/images/dishes/filter-coffee.jpg",
+    "isPopular": true,
+    "available": true
+  },
+  {
+    "_id": "seed-idli--2pcs-",
+    "name": "Idli (2pcs)",
+    "description": "Soft steamed rice cakes served with coconut chutney and hot sambar.",
+    "price": 40,
+    "category": "morning",
+    "isVeg": true,
+    "image": "/images/dishes/idli.jpg",
+    "isPopular": true,
+    "available": true
+  },
+  {
+    "_id": "seed-masala-dosa",
+    "name": "Masala Dosa",
+    "description": "Classic dosa stuffed with spiced potato masala, served with three chutneys.",
+    "price": 70,
+    "category": "morning",
+    "isVeg": true,
+    "image": "/images/dishes/dosa.jpg",
+    "isPopular": true,
+    "available": true
+  },
+  {
+    "_id": "seed-plain-dosa",
+    "name": "Plain Dosa",
+    "description": "Thin, crispy dosa roasted on a hot tawa with chutney and sambar.",
+    "price": 50,
+    "category": "morning",
+    "isVeg": true,
+    "image": "/images/dishes/dosa.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-pongal",
+    "name": "Pongal",
+    "description": "Ven pongal — peppered rice and lentil comfort food with ghee, gingelly oil oggarane.",
+    "price": 50,
+    "category": "morning",
+    "isVeg": true,
+    "image": "/images/dishes/pongal.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-poori---kurma",
+    "name": "Poori + Kurma",
+    "description": "Two puffed pooris with fragrant coconut kurma.",
+    "price": 50,
+    "category": "morning",
+    "isVeg": true,
+    "image": "/images/dishes/poori.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-upma",
+    "name": "Upma",
+    "description": "Rava upma with mustard, curry leaves and a hint of ginger.",
+    "price": 40,
+    "category": "morning",
+    "isVeg": true,
+    "image": "/images/dishes/upma.jpg",
+    "isPopular": false,
+    "available": true
+  },
+  {
+    "_id": "seed-vada--2pcs-",
+    "name": "Vada (2pcs)",
+    "description": "Crispy medu vada, golden fried — best dipped in sambar.",
+    "price": 35,
+    "category": "morning",
+    "isVeg": true,
+    "image": "/images/dishes/vada.jpg",
+    "isPopular": true,
+    "available": true
+  }
+]
