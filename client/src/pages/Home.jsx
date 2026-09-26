@@ -18,11 +18,26 @@ export default function Home() {
 
   return (
     <div>
-      {/* ---------- Hero ---------- */}
-      <section className="relative overflow-hidden">
-        <img src="/images/dishes/hero.jpg" alt="" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/25" />
-        <div className="relative mx-auto flex min-h-[74vh] max-w-6xl flex-col justify-center px-4 py-20 text-white">
+      {/* ---------- Hero ---------- (inline styles = fallback if CSS is slow/blocked) */}
+      <section className="relative overflow-hidden" style={{ position: 'relative', overflow: 'hidden', minHeight: '70vh' }}>
+        <img
+          src="/images/dishes/hero.jpg"
+          alt="South Indian meals served on a banana leaf at Hotel Sri Vari"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/25"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to right, rgba(0,0,0,.8), rgba(0,0,0,.55), rgba(0,0,0,.25))',
+          }}
+        />
+        <div
+          className="relative mx-auto flex min-h-[74vh] max-w-6xl flex-col justify-center px-4 py-20 text-white"
+          style={{ position: 'relative', maxWidth: '72rem', margin: '0 auto', minHeight: '66vh', padding: '4rem 1rem', color: '#fff' }}
+        >
           <span className="w-fit animate-fade-up rounded-full border border-white/30 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] backdrop-blur">
             Since 1998 · Mylapore, Chennai
           </span>
