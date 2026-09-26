@@ -1,23 +1,37 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import api from '../lib/api'
+import api, { loadSeed } from '../lib/api'
 import MenuItemCard from '../components/MenuItemCard'
 import Spinner from '../components/Spinner'
 
 export default function Home() {
   const [popular, setPopular] = useState(null)
   const [error, setError] = useState('')
+  const [offline, setOffline] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
     api
       .get('/menu/popular')
       .then((res) => setPopular(res.data.items))
-      .catch((e) => setError(e.message))
+      .catch(() =>
+        // API unreachable → fall back to the bundled seed menu (static demo)
+        loadSeed()
+          .then((items) => {
+            setOffline(true)
+            setPopular(items.filter((i) => i.isPopular).slice(0, 6))
+          })
+          .catch(() => setError('Could not load the menu right now.')),
+      )
   }, [])
 
   return (
     <div>
+      {offline && (
+        <div className="bg-ink px-4 py-2 text-center text-xs font-semibold text-stone-300">
+          📡 Static demo — menu &amp; cart work here; live ordering runs in the Arena LIVE PREVIEW or a local run.
+        </div>
+      )}
       {/* ---------- Hero ---------- (inline styles = fallback if CSS is slow/blocked) */}
       <section className="relative overflow-hidden" style={{ position: 'relative', overflow: 'hidden', minHeight: '70vh' }}>
         <img

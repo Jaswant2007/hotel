@@ -18,20 +18,45 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// Normalize errors → { message, status }
+// Normalize errors → { message, status, isNetwork }
 api.interceptors.response.use(
   (res) => res,
   (err) => {
     const message =
       err.response?.data?.message || err.message || 'Something went wrong. Please try again.'
     const status = err.response?.status
-    const normalized = Object.assign(new Error(message), { status, data: err.response?.data })
+    const normalized = Object.assign(new Error(message), {
+      status,
+      data: err.response?.data,
+      isNetwork: !err.response, // request never reached a server
+    })
     return Promise.reject(normalized)
   },
 )
 
 export function errMsg(e) {
+  if (e?.isNetwork) {
+    // API unreachable (static preview without a backend / offline)
+    return "The live server isn't reachable from here — you're viewing the static demo. Ordering & auth work in the Arena LIVE PREVIEW or a local run."
+  }
   return e?.message || 'Something went wrong. Please try again.'
+}
+
+/** Static seed menu (public/seed-menu.json) used when the API is unreachable. */
+let seedPromise = null
+export function loadSeed() {
+  if (!seedPromise) {
+    seedPromise = fetch(`${import.meta.env.BASE_URL}seed-menu.json`)
+      .then((r) => {
+        if (!r.ok) throw new Error('seed missing')
+        return r.json()
+      })
+      .catch((e) => {
+        seedPromise = null
+        throw e
+      })
+  }
+  return seedPromise
 }
 
 export default api

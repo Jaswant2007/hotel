@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import api from '../lib/api'
+import api, { loadSeed } from '../lib/api'
 import MenuItemCard from '../components/MenuItemCard'
 import Spinner from '../components/Spinner'
 
@@ -23,6 +23,7 @@ export default function Menu() {
   const [active, setActive] = useState(initial)
   const [items, setItems] = useState(null)
   const [error, setError] = useState('')
+  const [offline, setOffline] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -31,7 +32,16 @@ export default function Menu() {
     api
       .get('/menu', { params: { category: active } })
       .then((res) => !cancelled && setItems(res.data.items))
-      .catch((e) => !cancelled && setError(e.message))
+      .catch(() =>
+        // API unreachable → static seed fallback
+        loadSeed()
+          .then((seed) => {
+            if (cancelled) return
+            setOffline(true)
+            setItems(seed.filter((i) => i.category === active))
+          })
+          .catch(() => !cancelled && setError('Could not load the menu right now.')),
+      )
     return () => {
       cancelled = true
     }
@@ -49,6 +59,11 @@ export default function Menu() {
       <header className="text-center">
         <h1 className="font-display text-4xl font-extrabold text-ink">Our Menu</h1>
         <p className="mt-1 text-stone-500">Freshly cooked to order · Chennai-style pricing</p>
+        {offline && (
+          <p className="mx-auto mt-3 inline-block rounded-full bg-ink px-4 py-1.5 text-xs font-semibold text-stone-300">
+            📡 Static demo — prices &amp; dishes shown; live ordering runs in the Arena LIVE PREVIEW
+          </p>
+        )}
       </header>
 
       {/* Tabs */}
