@@ -1,0 +1,202 @@
+openapi: 3.1.0
+info:
+  title: Harbour Inn - Passwordless Email-OTP Authentication API
+  version: 1.0.0
+  description: >
+    Production-ready passwordless email-OTP authentication and session service
+    for the Harbour Inn boutique hotel direct-booking platform.
+servers:
+  - url: http://localhost:4000/api/v1
+    description: Local Development Server
+
+paths:
+  /auth/otp/request:
+    post:
+      summary: Request 6-digit Email-OTP
+      description: >
+        Dispatches a cryptographically secure 6-digit OTP code to the guest's email.
+        Enforces sliding-window rate limits (3 requests per 15 min per email, 10 per hour per IP).
+        Stores only HMAC-SHA256 hash. Returns generic response to prevent user enumeration.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, purpose]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: guest@harbourinn-hotel.com
+                purpose:
+                  type: string
+                  enum: [signup, login]
+                  example: login
+                name:
+                  type: string
+                  example: Eleanor Vance
+                phone:
+                  type: string
+                  example: "+1 (555) 234-5678"
+                consent:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Verification code dispatched
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: string, example: OTP_SENT }
+                  message: { type: string }
+                  emailMasked: { type: string, example: g***t@harbourinn-hotel.com }
+                  expiresAt: { type: string, format: date-time }
+                  cooldownSeconds: { type: integer, example: 30 }
+        '429':
+          description: Rate limit exceeded (Retry-After header present)
+        '400':
+          description: Validation error or disposable email blocked
+
+  /auth/otp/verify:
+    post:
+      summary: Verify 6-digit Email-OTP
+      description: >
+        Performs constant-time HMAC-SHA256 comparison of candidate code against database hash.
+        Locks code after 5 failed attempts. Sets HttpOnly short-lived Access Token (15m)
+        and rotating Refresh Token (30d) cookies upon success.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, code, purpose]
+              properties:
+                email: { type: string, format: email }
+                code: { type: string, minLength: 6, maxLength: 6, example: "482910" }
+                purpose: { type: string, enum: [signup, login] }
+      responses:
+        '200':
+          description: Successfully authenticated. HttpOnly session cookies issued.
+          headers:
+            Set-Cookie:
+              schema: { type: string }
+              description: access_token, refresh_token, csrf_token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: string, example: AUTH_SUCCESS }
+                  user:
+                    type: object
+                    properties:
+                      id: { type: string, format: uuid }
+                      email: { type: string }
+                      name: { type: string }
+        '400':
+          description: Invalid code, expired code, or maximum attempts exceeded
+
+  /auth/otp/resend:
+    post:
+      summary: Resend Email-OTP
+      description: Resends fresh 6-digit code subject to 30-second cooldown and rate limiting.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, purpose]
+              properties:
+                email: { type: string, format: email }
+                purpose: { type: string, enum: [signup, login] }
+      responses:
+        '200':
+          description: Fresh OTP dispatched
+        '429':
+          description: Cooldown active or rate limit exceeded
+
+  /auth/refresh:
+    post:
+      summary: Rotate Refresh Token Session
+      description: >
+        Exchanges current rotating refresh token in HttpOnly cookie for a fresh access token
+        and new refresh token. Detects token reuse; revokes entire token family if reuse detected.
+      responses:
+        '200':
+          description: Session refreshed successfully
+        '401':
+          description: Invalid, expired, or revoked refresh token
+
+  /auth/logout:
+    post:
+      summary: Log Out Current Device
+      description: Revokes the active refresh token and clears all session cookies.
+      responses:
+        '200':
+          description: Session revoked
+
+  /auth/logout-all:
+    post:
+      summary: Log Out All Devices
+      description: Revokes all refresh tokens issued to the authenticated user.
+      security:
+        - CookieAuth: []
+      responses:
+        '200':
+          description: All sessions revoked
+
+  /me:
+    get:
+      summary: Get Current Guest Profile
+      security:
+        - CookieAuth: []
+      responses:
+        '200':
+          description: Profile details returned
+    patch:
+      summary: Update Guest Profile
+      security:
+        - CookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                phone: { type: string }
+      responses:
+        '200':
+          description: Profile updated
+
+  /me/sessions:
+    get:
+      summary: List Active Device Sessions
+      description: Lists active refresh token sessions with IP, user agent, and timestamps.
+      security:
+        - CookieAuth: []
+      responses:
+        '200':
+          description: Array of active sessions
+
+  /me/export:
+    get:
+      summary: GDPR Data Portability Export
+      description: Returns JSON document of all guest records and audit logs.
+      security:
+        - CookieAuth: []
+      responses:
+        '200':
+          description: JSON download attachment
+
+components:
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: access_token

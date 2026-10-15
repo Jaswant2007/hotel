@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: #1F4E4A;
+    --cta: #9A5B2E;
+    --focus-ring: #D97706;
+  }
+
+  body {
+    background-color: #FAF7F2;
+    color: #262320;
+    font-family: 'Figtree', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Accessible focus indicators conforming to WCAG 2.2 AA (min 3:1 contrast & visible perimeter) */
+  :focus-visible {
+    outline: 2px solid #D97706 !important;
+    outline-offset: 2px !important;
+  }
+}
+
+@layer components {
+  /* 48px standard hotel input height, 8px radius */
+  .hotel-input {
+    height: 48px;
+    border-radius: 8px;
+    border: 1px solid #E3DCD4;
+    background-color: #FFFFFF;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 0.9375rem;
+    color: #262320;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .hotel-input:hover {
+    border-color: #C4DFD7;
+  }
+
+  .hotel-input:focus {
+    border-color: #1F4E4A;
+    outline: 2px solid #D97706;
+    outline-offset: 2px;
+  }
+
+  /* Terracotta Primary CTA */
+  .btn-cta {
+    min-height: 48px;
+    border-radius: 8px;
+    background-color: #9A5B2E;
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(154, 91, 46, 0.15);
+  }
+
+  .btn-cta:hover:not(:disabled) {
+    background-color: #804820;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(154, 91, 46, 0.25);
+  }
+
+  .btn-cta:active:not(:disabled) {
+    background-color: #6B3B18;
+    transform: translateY(0);
+  }
+
+  .btn-cta:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  /* Teal Secondary Button */
+  .btn-teal {
+    min-height: 48px;
+    border-radius: 8px;
+    background-color: #1F4E4A;
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .btn-teal:hover:not(:disabled) {
+    background-color: #183634;
+  }
+
+  .btn-outline {
+    min-height: 48px;
+    border-radius: 8px;
+    border: 1px solid #E3DCD4;
+    background-color: #FFFFFF;
+    color: #1F4E4A;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .btn-outline:hover:not(:disabled) {
+    border-color: #1F4E4A;
+    background-color: #F2F7F6;
+  }
+}

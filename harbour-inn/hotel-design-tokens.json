@@ -1,0 +1,65 @@
+{
+  "name": "Harbour Inn Design Tokens",
+  "version": "1.0.0",
+  "typography": {
+    "fontFamily": {
+      "serif": ["Newsreader", "Georgia", "serif"],
+      "sans": ["Figtree", "system-ui", "-apple-system", "sans-serif"]
+    },
+    "fontSize": {
+      "xs": ["0.75rem", { "lineHeight": "1rem" }],
+      "sm": ["0.875rem", { "lineHeight": "1.25rem" }],
+      "base": ["1rem", { "lineHeight": "1.5rem" }],
+      "lg": ["1.125rem", { "lineHeight": "1.75rem" }],
+      "xl": ["1.25rem", { "lineHeight": "1.75rem" }],
+      "2xl": ["1.5rem", { "lineHeight": "2rem" }],
+      "3xl": ["1.875rem", { "lineHeight": "2.25rem" }],
+      "4xl": ["2.25rem", { "lineHeight": "2.5rem" }]
+    }
+  },
+  "colors": {
+    "primary": {
+      "DEFAULT": "#1F4E4A",
+      "50": "#F2F7F6",
+      "100": "#E2EFEB",
+      "200": "#C4DFD7",
+      "300": "#97C5B8",
+      "400": "#609F90",
+      "500": "#3B8173",
+      "600": "#2E675C",
+      "700": "#1F4E4A",
+      "800": "#1B403D",
+      "900": "#183634"
+    },
+    "cta": {
+      "DEFAULT": "#9A5B2E",
+      "hover": "#804820",
+      "active": "#6B3B18",
+      "subtle": "#FBF5F0"
+    },
+    "focusRing": "#D97706",
+    "neutral": {
+      "cream": "#FAF7F2",
+      "paper": "#F4EFEA",
+      "card": "#FFFFFF",
+      "border": "#E3DCD4",
+      "text": "#262320",
+      "muted": "#6E6862"
+    },
+    "feedback": {
+      "success": "#1B6D42",
+      "successBg": "#EDF7F1",
+      "error": "#B91C1C",
+      "errorBg": "#FEF2F2",
+      "warning": "#B45309",
+      "warningBg": "#FFFBEB"
+    }
+  },
+  "ui": {
+    "inputHeight": "48px",
+    "borderRadius": "8px",
+    "minTouchTarget": "44px",
+    "focusRingWidth": "2px",
+    "focusRingOffset": "2px"
+  }
+}
