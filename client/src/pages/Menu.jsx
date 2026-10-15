@@ -1,58 +1,79 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import api, { loadSeed } from '../lib/api'
+import api, { seedMenu } from '../lib/api'
 import MenuItemCard from '../components/MenuItemCard'
-import Spinner from '../components/Spinner'
 
 const TABS = [
-  { id: 'morning', label: 'Morning Tiffin', time: '6:30 AM – 11:00 AM', emoji: '🌄', subtitle: 'Idlis, Dosas & Filter Kaapi' },
-  { id: 'afternoon', label: 'Afternoon Feast', time: '12:00 PM – 3:30 PM', emoji: '☀️', subtitle: 'Saapadu & Biryani' },
-  { id: 'dinner', label: 'Dinner Tiffin', time: '7:00 PM – 10:30 PM', emoji: '🌙', subtitle: 'Parottas & Chettinad' },
+  {
+    id: 'morning',
+    label: 'Morning Tiffin',
+    time: '6:30 AM – 11:00 AM',
+    emoji: '🌄',
+    subtitle: 'Idlis, Dosas & Filter Kaapi',
+    canOrder: false,
+    badgeText: 'Orders Closed',
+  },
+  {
+    id: 'afternoon',
+    label: 'Afternoon Feast',
+    time: '12:00 PM – 3:30 PM',
+    emoji: '☀️',
+    subtitle: 'Saapadu & Biryani',
+    canOrder: false,
+    badgeText: 'Orders Closed',
+  },
+  {
+    id: 'dinner',
+    label: 'Night Tiffin',
+    time: '7:00 PM – 10:30 PM',
+    emoji: '🌙',
+    subtitle: 'Parottas & Chettinad Specials',
+    canOrder: true,
+    badgeText: '🟢 Orderable Now',
+  },
 ]
-
-function slotByClock() {
-  const h = new Date().getHours()
-  if (h >= 5 && h < 11) return 'morning'
-  if (h >= 11 && h < 16) return 'afternoon'
-  return 'dinner'
-}
 
 export default function Menu() {
   const [params, setParams] = useSearchParams()
-  const initial = TABS.some((t) => t.id === params.get('slot')) ? params.get('slot') : slotByClock()
+  // Default to slot in URL, or 'dinner' (Night Tiffin) where ordering is active
+  const initial = TABS.some((t) => t.id === params.get('slot')) ? params.get('slot') : 'dinner'
   const [active, setActive] = useState(initial)
-  const [items, setItems] = useState(null)
+  
+  // Instant hydration from bundled seedMenu — zero loading lockup or delay
+  const [items, setItems] = useState(() => seedMenu.filter((i) => i.category === initial))
   const [error, setError] = useState('')
   const [offline, setOffline] = useState(false)
 
   useEffect(() => {
     let cancelled = false
     setError('')
+    // Best effort background sync with server if available
     api
       .get('/menu', { params: { category: active } })
-      .then((res) => !cancelled && setItems(res.data.items))
-      .catch(() =>
-        loadSeed()
-          .then((seed) => {
-            if (cancelled) return
-            setOffline(true)
-            setItems(seed.filter((i) => i.category === active))
-          })
-          .catch(() => !cancelled && setError('Could not load the menu right now.')),
-      )
+      .then((res) => {
+        if (!cancelled && res.data && Array.isArray(res.data.items) && res.data.items.length > 0) {
+          setItems(res.data.items)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setOffline(true)
+      })
     return () => {
       cancelled = true
     }
   }, [active])
 
-  const activeTab = useMemo(() => TABS.find((t) => t.id === active), [active])
+  const activeTab = useMemo(() => TABS.find((t) => t.id === active) || TABS[2], [active])
 
   const pick = (id) => {
     if (id === active) return
     setActive(id)
-    setItems(null)
+    // Instant switch with zero delay
+    setItems(seedMenu.filter((i) => i.category === id))
     setParams({ slot: id }, { replace: true })
   }
+
+  const isNight = active === 'dinner'
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 lg:py-16">
@@ -69,13 +90,13 @@ export default function Menu() {
         </p>
         {offline && (
           <p className="mx-auto mt-4 inline-block rounded-full bg-ink px-4 py-1.5 text-xs font-semibold text-stone-300">
-            📡 Offline Mode — Local dishes and ordering fully accessible.
+            📡 Offline Mode — All items &amp; Night Tiffin ordering fully active.
           </p>
         )}
       </header>
 
       {/* Double-Bezel Tab Selector */}
-      <div className="mt-10 flex justify-center">
+      <div className="mt-10 flex flex-col items-center">
         <div className="no-scrollbar flex max-w-full items-center gap-1.5 overflow-x-auto rounded-full bg-stone-200/70 p-1.5 border border-stone-300/50 shadow-inner">
           {TABS.map((t) => {
             const isSel = active === t.id
@@ -91,30 +112,91 @@ export default function Menu() {
               >
                 <span>{t.emoji}</span>
                 <span>{t.label}</span>
+                <span
+                  className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-tight ${
+                    t.canOrder
+                      ? isSel
+                        ? 'bg-emerald-500 text-white'
+                        : 'bg-emerald-100 text-emerald-800'
+                      : isSel
+                      ? 'bg-white/20 text-white'
+                      : 'bg-stone-300/60 text-stone-600'
+                  }`}
+                >
+                  {t.canOrder ? 'Order Now' : 'Price View'}
+                </span>
               </button>
             )
           })}
         </div>
+
+        {/* Slot Time & Status Eyebrow */}
+        <div className="mt-4 text-center">
+          <p className="text-xs font-semibold text-stone-500 tracking-wide">
+            {activeTab.label} Service · <span className="text-brand-700 font-bold tabular-nums">{activeTab.time}</span> ·{' '}
+            {activeTab.canOrder ? (
+              <span className="text-emerald-700 font-bold">🟢 Online Ordering Open</span>
+            ) : (
+              <span className="text-stone-500 font-medium">Viewing &amp; Prices Only (Orders Closed)</span>
+            )}
+          </p>
+        </div>
       </div>
 
-      {/* Slot Time Eyebrow */}
-      <div className="mt-4 text-center">
-        <p className="text-xs font-semibold text-stone-500 tracking-wide">
-          {activeTab.label} Service · <span className="text-brand-700 font-bold tabular-nums">{activeTab.time}</span>
-        </p>
-      </div>
+      {/* Service Status Notification Banner */}
+      {!isNight ? (
+        <div className="mt-6 mx-auto max-w-3xl rounded-2xl border border-stone-300/80 bg-stone-100/90 p-4 sm:p-5 shadow-sm">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-left">
+            <div className="flex items-center gap-3">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white border border-stone-200 text-xl shadow-inner">
+                {activeTab.emoji}
+              </span>
+              <div>
+                <h2 className="text-sm font-bold text-ink flex items-center gap-2">
+                  <span>{activeTab.label} — Menu &amp; Price Preview</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider bg-stone-200 text-stone-700 px-2 py-0.5 rounded-full">
+                    Orders Closed
+                  </span>
+                </h2>
+                <p className="text-xs text-stone-600 mt-1 leading-relaxed">
+                  All dish details and prices are shown below. Ordering is currently reserved for the{' '}
+                  <strong className="text-brand-700">Night Tiffin</strong> slot.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => pick('dinner')}
+              className="shrink-0 rounded-full bg-brand-600 px-5 py-2.5 text-xs font-bold text-white shadow-pop hover:bg-brand-700 active:scale-95 transition"
+            >
+              Order Night Tiffin 🌙
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-6 mx-auto max-w-3xl rounded-2xl border border-emerald-300 bg-emerald-50/90 p-4 sm:p-5 shadow-sm">
+          <div className="flex items-center gap-3 text-emerald-950">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 text-xl">
+              🌙
+            </span>
+            <div>
+              <h2 className="text-sm font-bold text-emerald-950 flex items-center gap-2">
+                <span>Night Tiffin Ordering is Live!</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full">
+                  Accepting Orders
+                </span>
+              </h2>
+              <p className="text-xs text-emerald-800 mt-0.5">
+                Every Night dish below is ready for instant ordering, freshly made on the hot tawa.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Error state */}
       {error && (
         <div className="mx-auto mt-8 max-w-lg rounded-2xl border border-red-200 bg-red-50 p-5 text-center text-sm text-red-700">
           {error}
-        </div>
-      )}
-
-      {/* Loading state */}
-      {!items && !error && (
-        <div className="mt-16 py-12">
-          <Spinner label={`Loading ${activeTab.label} specialties…`} full />
         </div>
       )}
 
@@ -125,7 +207,7 @@ export default function Menu() {
         </div>
       )}
 
-      {/* Items Grid */}
+      {/* Items Grid — displays every dish with price */}
       {items && items.length > 0 && (
         <div key={active} className="mt-10 grid animate-fade-up gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((item) => (

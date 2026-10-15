@@ -59,6 +59,10 @@ export function CartProvider({ children }) {
   }, [items, user?._id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const addItem = useCallback((menuItem, qty = 1) => {
+    // Only night items ('dinner') can be ordered
+    if (menuItem.category && menuItem.category !== 'dinner') {
+      return
+    }
     setItems((prev) => {
       const idx = prev.findIndex((i) => i.menuItem._id === menuItem._id)
       if (idx === -1) return [...prev, { menuItem, qty }]

@@ -42,21 +42,12 @@ export function errMsg(e) {
   return e?.message || 'Something went wrong. Please try again.'
 }
 
-/** Static seed menu (public/seed-menu.json) used when the API is unreachable. */
-let seedPromise = null
+import seedMenuData from '../data/seedMenu.json'
+export const seedMenu = seedMenuData
+
+/** Static seed menu bundled directly so there is zero network delay or loading errors */
 export function loadSeed() {
-  if (!seedPromise) {
-    seedPromise = fetch(`${import.meta.env.BASE_URL}seed-menu.json`)
-      .then((r) => {
-        if (!r.ok) throw new Error('seed missing')
-        return r.json()
-      })
-      .catch((e) => {
-        seedPromise = null
-        throw e
-      })
-  }
-  return seedPromise
+  return Promise.resolve(seedMenuData)
 }
 
 export default api

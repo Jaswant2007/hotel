@@ -11,6 +11,9 @@ export default function Cart() {
   const freeOver = 500
   const toFree = Math.max(0, freeOver - subtotal)
 
+  const nonNightItems = items.filter((i) => i.menuItem?.category && i.menuItem?.category !== 'dinner')
+  const hasRestrictedItems = nonNightItems.length > 0
+
   if (items.length === 0) {
     return (
       <div className="mx-auto flex min-h-[60vh] max-w-lg flex-col items-center justify-center px-4 text-center">
@@ -18,7 +21,7 @@ export default function Cart() {
           <div className="doppel-core p-10 flex flex-col items-center">
             <div className="grid h-20 w-20 place-items-center rounded-full bg-brand-50 text-4xl shadow-inner">🛒</div>
             <h1 className="mt-5 font-display text-3xl font-extrabold text-ink">Your cart is empty</h1>
-            <p className="mt-2 text-sm text-stone-500">Add steaming idlis or a fiery biryani to get started.</p>
+            <p className="mt-2 text-sm text-stone-500">Explore hot Night Tiffins or view morning &amp; afternoon specialities.</p>
             <Link to="/menu" className="btn-island mt-6">
               <span>Browse Full Menu</span>
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20">↗</span>
@@ -39,6 +42,26 @@ export default function Cart() {
           Your Cart <span className="text-stone-400 font-light text-2xl">({count} item{count > 1 ? 's' : ''})</span>
         </h1>
       </header>
+
+      {hasRestrictedItems && (
+        <div className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-2.5">
+            <span className="text-xl">⚠️</span>
+            <div>
+              <p className="font-bold text-amber-950 text-sm">Notice: Night Slot Orders Only</p>
+              <p className="text-amber-800 text-xs mt-0.5">
+                Hotel Sri Vari currently accepts orders for <strong>Night Tiffin</strong> items only. Please remove morning or afternoon items to proceed.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => nonNightItems.forEach((i) => removeItem(i.menuItem._id))}
+            className="shrink-0 rounded-full bg-amber-800 text-white px-4 py-2 text-xs font-bold hover:bg-amber-900 transition shadow-sm"
+          >
+            Remove Non-Night Items
+          </button>
+        </div>
+      )}
 
       <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
         {/* Items List */}
@@ -114,10 +137,13 @@ export default function Cart() {
               )}
 
               <button
+                disabled={hasRestrictedItems}
                 onClick={() => navigate('/checkout')}
-                className="btn-island w-full mt-6"
+                className={`btn-island w-full mt-6 ${
+                  hasRestrictedItems ? 'opacity-60 cursor-not-allowed hover:translate-y-0' : ''
+                }`}
               >
-                <span>Proceed to Checkout</span>
+                <span>{hasRestrictedItems ? 'Night Items Only Can Be Ordered' : 'Proceed to Checkout'}</span>
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20">→</span>
               </button>
 

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import api, { loadSeed } from '../lib/api'
+import api, { seedMenu } from '../lib/api'
 import MenuItemCard from '../components/MenuItemCard'
 import Spinner from '../components/Spinner'
 
 export default function Home() {
-  const [popular, setPopular] = useState(null)
+  const [popular, setPopular] = useState(() => seedMenu.filter((i) => i.isPopular).slice(0, 6))
   const [error, setError] = useState('')
   const [offline, setOffline] = useState(false)
   const navigate = useNavigate()
@@ -13,15 +13,14 @@ export default function Home() {
   useEffect(() => {
     api
       .get('/menu/popular')
-      .then((res) => setPopular(res.data.items))
-      .catch(() =>
-        loadSeed()
-          .then((items) => {
-            setOffline(true)
-            setPopular(items.filter((i) => i.isPopular).slice(0, 6))
-          })
-          .catch(() => setError('Could not load the menu right now.')),
-      )
+      .then((res) => {
+        if (res.data && Array.isArray(res.data.items) && res.data.items.length > 0) {
+          setPopular(res.data.items)
+        }
+      })
+      .catch(() => {
+        setOffline(true)
+      })
   }, [])
 
   return (
