@@ -13,7 +13,7 @@ describe('Token Service & Refresh Token Rotation (Integration Tests)', () => {
 
     // Mock query
     vi.spyOn(dbModule, 'query').mockImplementation(async (sql: string, params?: any[]) => {
-      const lower = sql.toLowerCase();
+      const lower = sql.toLowerCase().replace(/\s+/g, ' ');
 
       // INSERT
       if (lower.includes('insert into refresh_tokens')) {

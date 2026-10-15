@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { User, LogOut, Calendar, Shield, ChevronDown, Compass } from 'lucide-react';
+import { LogOut, Calendar, Shield, ChevronDown } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const { user, logout, logoutAll, openAuthModal } = useAuth();
