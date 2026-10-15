@@ -1,12 +1,16 @@
 # Hotel Sri Vari — Online Food Ordering & Delivery
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel_Production-success?style=for-the-badge&logo=vercel)](https://hotel-rho-lake.vercel.app)
+![Stack](https://img.shields.io/badge/stack-React%20%C2%B7%20Express%20%C2%B7%20MongoDB-orange?style=for-the-badge)
+
+> 🌐 **Live Website:** [https://hotel-rho-lake.vercel.app](https://hotel-rho-lake.vercel.app)  
+> 🔗 **Preview Deployment:** [https://hotel-c0frcwxxy-jaszdev.vercel.app](https://hotel-c0frcwxxy-jaszdev.vercel.app)
+
 A full-stack ordering website for **Hotel Sri Vari**, a small South Indian hotel in Mylapore,
 Chennai. Customers browse the menu by meal slot (Morning / Afternoon / Dinner), add items to a
 cart, get their first-order discount applied automatically, pay online with Razorpay (or cash on
 delivery), and track the kitchen status live. Hotel staff get a minimal kitchen queue dashboard
 to update order status.
-
-![Stack](https://img.shields.io/badge/stack-React%20%C2%B7%20Express%20%C2%B7%20MongoDB-orange)
 
 ## Tech stack
 
