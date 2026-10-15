@@ -8,6 +8,11 @@ import Spinner from '../components/Spinner'
 const FREE_OVER = 500
 const DEFAULT_FEE = 20
 
+const makeDemoIds = () => ({
+  orderId: `demo_${Date.now()}`,
+  paymentId: `demo_pay_${Date.now()}`,
+})
+
 /**
  * Checkout: address / pickup → delivery fee → discount → payment (Razorpay or COD).
  * All money math is re-verified server-side; this is a preview for the user.
@@ -17,8 +22,14 @@ export default function Checkout() {
   const { items, subtotal, clearCart } = useCart()
   const navigate = useNavigate()
 
+  const addresses = useMemo(() => user?.addresses || [], [user?.addresses])
+  const initialAddressId = useMemo(() => {
+    const def = (user?.addresses || []).find((a) => a.isDefault) || (user?.addresses || [])[0]
+    return def?._id || ''
+  }, [user?.addresses])
+
   const [isPickup, setIsPickup] = useState(false)
-  const [addressId, setAddressId] = useState('')
+  const [addressId, setAddressId] = useState(initialAddressId)
   const [newAddress, setNewAddress] = useState(null) // {line1,area,city,pincode,note}
   const [paymentMethod, setPaymentMethod] = useState('razorpay')
   const [note, setNote] = useState('')
@@ -26,15 +37,12 @@ export default function Checkout() {
   const [error, setError] = useState('')
   const [demoPaying, setDemoPaying] = useState(false)
 
-  const addresses = user?.addresses || []
-
-  // Default selection
+  // Sync addressId if user addresses load asynchronously
   useEffect(() => {
-    if (addresses.length && !addressId && !newAddress) {
-      const def = addresses.find((a) => a.isDefault) || addresses[0]
-      setAddressId(def._id)
+    if (!addressId && !newAddress && initialAddressId) {
+      setAddressId(initialAddressId)
     }
-  }, [addresses, addressId, newAddress])
+  }, [initialAddressId, addressId, newAddress])
 
   // Empty cart → back to menu
   useEffect(() => {
@@ -45,7 +53,7 @@ export default function Checkout() {
     if (isPickup) return null
     if (newAddress) return { ...newAddress, phone: user?.phone }
     return addresses.find((a) => a._id === addressId) || null
-  }, [isPickup, newAddress, addresses, addressId, user])
+  }, [isPickup, newAddress, addresses, addressId, user?.phone])
 
   // ----- Client-side estimate (server recomputes authoritatively) -----
   const discount = user?.isFirstOrder ? Math.round(subtotal * 0.1) : 0
@@ -85,11 +93,12 @@ export default function Checkout() {
       if (data.payment?.demo) {
         // Demo mode (no Razorpay keys configured): simulate the checkout.
         setDemoPaying(true)
+        const demoIds = makeDemoIds()
         const verify = await api.post('/payment/verify', {
           orderId: data.order._id,
           demo: true,
-          razorpay_order_id: `demo_${Date.now()}`,
-          razorpay_payment_id: `demo_pay_${Date.now()}`,
+          razorpay_order_id: demoIds.orderId,
+          razorpay_payment_id: demoIds.paymentId,
           razorpay_signature: 'demo',
         })
         setDemoPaying(false)

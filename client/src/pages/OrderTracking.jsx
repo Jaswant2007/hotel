@@ -12,7 +12,7 @@ export default function OrderTracking() {
   const justPlaced = params.get('placed') === '1'
   const [order, setOrder] = useState(null)
   const [error, setError] = useState('')
-  const [now, setNow] = useState(Date.now())
+  const [now, setNow] = useState(() => Date.now())
 
   const load = useCallback(async () => {
     try {

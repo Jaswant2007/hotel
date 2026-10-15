@@ -27,7 +27,6 @@ export default function Menu() {
 
   useEffect(() => {
     let cancelled = false
-    setItems(null)
     setError('')
     api
       .get('/menu', { params: { category: active } })
@@ -49,7 +48,9 @@ export default function Menu() {
   const activeTab = useMemo(() => TABS.find((t) => t.id === active), [active])
 
   const pick = (id) => {
+    if (id === active) return
     setActive(id)
+    setItems(null)
     setParams({ slot: id }, { replace: true })
   }
 
