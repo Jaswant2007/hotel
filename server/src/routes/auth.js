@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { body } from 'express-validator';
@@ -78,9 +79,65 @@ router.post('/login', loginRules, validate, async (req, res, next) => {
   }
 });
 
+/** POST /api/auth/supabase-sync — bridge Supabase authenticated user into Hotel database */
+router.post('/supabase-sync', async (req, res, next) => {
+  try {
+    const { email, phone, name, address } = req.body;
+    if (!email && !phone) {
+      return res.status(400).json({ message: 'Email or phone required from Supabase session' });
+    }
+
+    // Look up by email or phone
+    const queries = [];
+    if (email) queries.push({ email: email.toLowerCase().trim() });
+    if (phone) {
+      const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+      if (cleanPhone) queries.push({ phone: cleanPhone });
+    }
+
+    let user = null;
+    if (queries.length > 0) {
+      user = await User.findOne({ $or: queries });
+    }
+
+    if (!user) {
+      const cleanPhone = phone ? phone.replace(/\D/g, '').slice(-10) : '9876543210';
+      const cleanEmail = email ? email.toLowerCase().trim() : `guest_${cleanPhone}@hotelsrivar.com`;
+      const displayName = name || (email ? email.split('@')[0] : `Guest ${cleanPhone.slice(-4)}`);
+      const dummyPassword = crypto.randomBytes(16).toString('hex');
+
+      user = await User.create({
+        name: displayName,
+        email: cleanEmail,
+        phone: cleanPhone,
+        password: dummyPassword,
+        isFirstOrder: true,
+        addresses: address?.line1
+          ? [
+              {
+                label: 'Home',
+                line1: address.line1,
+                area: address.area || '',
+                city: address.city || 'Chennai',
+                pincode: address.pincode || '600004',
+                phone: cleanPhone,
+                isDefault: true,
+              },
+            ]
+          : [],
+      });
+    }
+
+    res.json({ token: tokenFor(user), user: user.toJSON() });
+  } catch (err) {
+    next(err);
+  }
+});
+
 /** GET /api/auth/me — current session */
 router.get('/me', protect, (req, res) => {
   res.json({ user: req.user.toJSON() });
 });
 
 export default router;
+
