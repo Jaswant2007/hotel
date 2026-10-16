@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { errMsg } from '../lib/api'
+import { formatAuthError } from '../lib/supabase'
 import OtpInput from '../components/OtpInput'
 
 export default function Login() {
@@ -42,7 +43,7 @@ export default function Login() {
 
     const cleanEmail = email.trim()
     if (!cleanEmail || !cleanEmail.includes('@')) {
-      setError('Please enter a valid email address.')
+      setError('Please enter a valid email address (e.g., name@gmail.com).')
       return
     }
 
@@ -54,7 +55,7 @@ export default function Login() {
       setOtpCode('')
       setResendTimer(45)
     } catch (err) {
-      setError(errMsg(err))
+      setError(formatAuthError(err))
     } finally {
       setBusy(false)
     }
@@ -75,7 +76,7 @@ export default function Login() {
       await verifyOtp({ email: email.trim(), token: otpCode })
       navigate(from, { replace: true })
     } catch (err) {
-      setError(errMsg(err) || 'Invalid or expired verification code. Please try again.')
+      setError(formatAuthError(err))
     } finally {
       setBusy(false)
     }

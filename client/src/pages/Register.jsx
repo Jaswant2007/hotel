@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { errMsg } from '../lib/api'
+import { formatAuthError } from '../lib/supabase'
 import OtpInput from '../components/OtpInput'
 
 export default function Register() {
@@ -72,7 +73,7 @@ export default function Register() {
         setOtpCode('')
         setResendTimer(45)
       } catch (err) {
-        setError(errMsg(err))
+        setError(formatAuthError(err))
       } finally {
         setBusy(false)
       }
@@ -133,7 +134,7 @@ export default function Register() {
       })
       navigate('/', { replace: true })
     } catch (err) {
-      setError(errMsg(err) || 'Invalid or expired code. Please try again.')
+      setError(formatAuthError(err))
     } finally {
       setBusy(false)
     }

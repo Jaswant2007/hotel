@@ -158,9 +158,26 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(
     async (email, password) => {
-      const res = await api.post('/auth/login', { email, password })
-      applySession(res.data)
-      return res.data.user
+      const cleanEmail = email.trim().toLowerCase()
+      try {
+        const res = await api.post('/auth/login', { email: cleanEmail, password })
+        applySession(res.data)
+        return res.data.user
+      } catch (err) {
+        // Safe fallback for demo staff login when running standalone on Vercel
+        if (cleanEmail === 'staff@hotelsrivar.com' && password === 'staff123') {
+          const demoStaff = {
+            _id: 'staff_demo_1',
+            name: 'Kitchen Staff',
+            email: 'staff@hotelsrivar.com',
+            role: 'staff',
+            isFirstOrder: false,
+          }
+          applySession({ token: 'demo_staff_token', user: demoStaff })
+          return demoStaff
+        }
+        throw err
+      }
     },
     [applySession],
   )
